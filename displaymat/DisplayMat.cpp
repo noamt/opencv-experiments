@@ -14,6 +14,12 @@ int main (int argc, char** argv) {
     namedWindow("Custom Mat" , WINDOW_AUTOSIZE);
     imshow("Custom Mat", customMat);
 
+    Mat randomMat = Mat(256, 256, CV_8UC3);
+    randu(randomMat, Scalar::all(0), Scalar::all(255));
+
+    namedWindow("Random Mat" , WINDOW_AUTOSIZE);
+    imshow("Random Mat", randomMat);
+
     waitKey(0);
     return 0;
 }
