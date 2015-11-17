@@ -4,6 +4,7 @@
 using namespace cv;
 
 Mat& reduceColor(Mat& originalImage, const uchar* const table);
+Mat& reduceColorWithIterator(Mat& originalImage, const uchar* const table);
 
 int main(int argc, char** argv) {
 
@@ -37,7 +38,8 @@ int main(int argc, char** argv) {
         table[i] = (uchar)(divider * (i/divider));
     }
 
-    Mat modifiedImage = reduceColor(originalImage, table);
+    //Mat modifiedImage = reduceColor(originalImage, table);
+    Mat modifiedImage = reduceColorWithIterator(originalImage, table);
     namedWindow("Display Image", WINDOW_AUTOSIZE);
     imshow("Display Image", modifiedImage);    
     waitKey(0);
@@ -71,3 +73,26 @@ Mat& reduceColor(Mat& originalImage, const uchar* const table) {
     return originalImage;
 }
 
+Mat& reduceColorWithIterator(Mat& originalImage, const uchar* const table) {
+    CV_Assert(originalImage.depth() == CV_8U);
+    
+    const int channels = originalImage.channels();
+    switch (channels) {
+        case 1: {
+            MatIterator_<uchar> it, end;
+            for (it = originalImage.begin<uchar>(), end = originalImage.end<uchar>(); it != end; ++it) {
+                *it = table[*it];
+            }
+            break; 
+        }
+        case 3: {
+            MatIterator_<Vec3b> it, end;
+            for (it = originalImage.begin<Vec3b>(), end = originalImage.end<Vec3b>(); it != end; ++it) {
+                (*it)[0] = table[(*it)[0]];
+                (*it)[1] = table[(*it)[1]];
+                (*it)[2] = table[(*it)[2]];
+            }
+        }
+    }
+    return originalImage;
+}
