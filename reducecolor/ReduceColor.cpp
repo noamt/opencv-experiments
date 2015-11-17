@@ -5,6 +5,7 @@ using namespace cv;
 
 Mat& reduceColor(Mat& originalImage, const uchar* const table);
 Mat& reduceColorWithIterator(Mat& originalImage, const uchar* const table);
+Mat reduceColorWithLut(Mat& originalImage, const uchar* const table);
 
 int main(int argc, char** argv) {
 
@@ -39,7 +40,9 @@ int main(int argc, char** argv) {
     }
 
     //Mat modifiedImage = reduceColor(originalImage, table);
-    Mat modifiedImage = reduceColorWithIterator(originalImage, table);
+    //Mat modifiedImage = reduceColorWithIterator(originalImage, table);
+    Mat modifiedImage = reduceColorWithLut(originalImage, table);
+
     namedWindow("Display Image", WINDOW_AUTOSIZE);
     imshow("Display Image", modifiedImage);    
     waitKey(0);
@@ -95,4 +98,14 @@ Mat& reduceColorWithIterator(Mat& originalImage, const uchar* const table) {
         }
     }
     return originalImage;
+}
+
+Mat reduceColorWithLut(Mat& originalImage, const uchar* const table) {
+    Mat modifiedImage;
+    Mat lookUpTable(1, 256, CV_8U);
+    uchar* p = lookUpTable.data;
+    for( int i = 0; i < 256; ++i)
+        p[i] = table[i];    
+    LUT(originalImage, lookUpTable, modifiedImage);
+    return modifiedImage;
 }
